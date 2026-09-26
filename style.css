@@ -26,6 +26,15 @@ body.light-text {
     --shadow: 0 18px 45px rgba(0, 0, 0, 0.18);
 }
 
+/* =========================================
+   MODAL THEME
+========================================= */
+
+.modal {
+    --text: #252735;
+    --muted: rgba(37, 39, 53, 0.62);
+}
+
 html,
 body {
     min-height: 100%;
@@ -480,11 +489,10 @@ button {
     background: rgba(255, 255, 255, 0.4);
 
     font-size: 23px;
-    color: var(--text);
+    color: #252735;
 
     cursor: pointer;
 }
-
 
 /* =========================================
    FORM
