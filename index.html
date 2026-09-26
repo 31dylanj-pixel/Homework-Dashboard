@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+    <meta name="theme-color" content="#989ecb">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Classroom Dashboard">
+
+    <title>Classroom Dashboard</title>
+
+    <link rel="icon" type="image/png" href="favicon.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Poppins:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <main class="app">
+
+        <!-- HEADER -->
+        <header class="topbar">
+
+            <div>
+                <p class="eyebrow">YOUR SCHOOL DASHBOARD</p>
+                <h1 id="greeting">Good afternoon</h1>
+                <p id="dateText"></p>
+            </div>
+
+            <button class="settings-button"
+                    id="settingsButton"
+                    aria-label="Open settings">
+
+                <!-- SVG SETTINGS ICON -->
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden="true">
+
+                    <path
+                        d="M12 15.25C13.7949 15.25 15.25 13.7949 15.25 12C15.25 10.2051 13.7949 8.75 12 8.75C10.2051 8.75 8.75 10.2051 8.75 12C8.75 13.7949 10.2051 15.25 12 15.25Z"
+                        stroke="currentColor"
+                        stroke-width="1.7"/>
+
+                    <path
+                        d="M19.43 15.02C19.47 14.69 19.5 14.35 19.5 14C19.5 13.65 19.47 13.31 19.43 12.98L21.11 11.67L19.11 8.21L17.1 9.02C16.56 8.59 15.95 8.24 15.28 8L15 5.85H11L10.72 8C10.05 8.24 9.44 8.59 8.9 9.02L6.89 8.21L4.89 11.67L6.57 12.98C6.53 13.31 6.5 13.65 6.5 14C6.5 14.35 6.53 14.69 6.57 15.02L4.89 16.33L6.89 19.79L8.9 18.98C9.44 19.41 10.05 19.76 10.72 20L11 22.15H15L15.28 20C15.95 19.76 16.56 19.41 17.1 18.98L19.11 19.79L21.11 16.33L19.43 15.02Z"
+                        stroke="currentColor"
+                        stroke-width="1.7"
+                        stroke-linejoin="round"/>
+                </svg>
+
+            </button>
+
+        </header>
+
+
+        <!-- STATS -->
+        <section class="stats">
+
+            <div class="stat-card">
+                <span class="stat-number" id="todayCount">0</span>
+                <span class="stat-label">Due Today</span>
+            </div>
+
+            <div class="stat-card">
+                <span class="stat-number" id="upcomingCount">0</span>
+                <span class="stat-label">Upcoming</span>
+            </div>
+
+            <div class="stat-card">
+                <span class="stat-number" id="completedCount">0</span>
+                <span class="stat-label">Completed</span>
+            </div>
+
+        </section>
+
+
+        <!-- ASSIGNMENTS -->
+        <section class="content-section">
+
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">YOUR WORK</p>
+                    <h2>Assignments</h2>
+                </div>
+
+                <button class="add-button" id="addButton">
+                    <span>+</span>
+                    Add Assignment
+                </button>
+            </div>
+
+            <div id="assignmentList" class="assignment-list"></div>
+
+            <div id="emptyState" class="empty-state">
+                <div class="empty-icon">✓</div>
+                <h3>You're all caught up</h3>
+                <p>Add an assignment whenever you get something new.</p>
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- ADD ASSIGNMENT MODAL -->
+    <div class="modal-overlay" id="assignmentModal">
+
+        <div class="modal">
+
+            <button class="close-button" id="closeAssignmentModal">
+                ×
+            </button>
+
+            <p class="eyebrow">NEW TASK</p>
+            <h2>Add Assignment</h2>
+
+            <form id="assignmentForm">
+
+                <label>
+                    Assignment Name
+                    <input
+                        id="assignmentName"
+                        type="text"
+                        placeholder="e.g. Unit 5.2 Study Guide"
+                        required>
+                </label>
+
+                <label>
+                    Class
+                    <select id="assignmentClass" required></select>
+                </label>
+
+                <div class="form-row">
+
+                    <label>
+                        Due Date
+                        <input
+                            id="assignmentDate"
+                            type="date"
+                            required>
+                    </label>
+
+                    <label>
+                        Due Time
+                        <input
+                            id="assignmentTime"
+                            type="time">
+                    </label>
+
+                </div>
+
+                <label>
+                    Priority
+                    <select id="assignmentPriority">
+                        <option value="low">Low</option>
+                        <option value="normal" selected>Normal</option>
+                        <option value="high">High</option>
+                    </select>
+                </label>
+
+                <button class="primary-button" type="submit">
+                    Add Assignment
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- SETTINGS MODAL -->
+    <div class="modal-overlay" id="settingsModal">
+
+        <div class="modal settings-modal">
+
+            <button class="close-button" id="closeSettingsModal">
+                ×
+            </button>
+
+            <p class="eyebrow">CUSTOMIZE</p>
+            <h2>Settings</h2>
+
+
+            <!-- APPEARANCE -->
+            <div class="settings-section">
+
+                <h3>Appearance</h3>
+
+                <p class="setting-description">
+                    Choose a background for your dashboard.
+                </p>
+
+                <div class="gradient-grid" id="gradientGrid"></div>
+
+            </div>
+
+
+            <!-- CLASSES -->
+            <div class="settings-section">
+
+                <div class="settings-title-row">
+                    <div>
+                        <h3>Classes</h3>
+                        <p class="setting-description">
+                            Manage your classes and their colors.
+                        </p>
+                    </div>
+
+                    <button class="small-add-button" id="addClassButton">
+                        + Add
+                    </button>
+                </div>
+
+                <div id="classList" class="class-list"></div>
+
+            </div>
+
+
+            <!-- DATA -->
+            <div class="settings-section">
+
+                <h3>Data</h3>
+
+                <div class="data-buttons">
+
+                    <button id="exportButton" class="secondary-button">
+                        Export Data
+                    </button>
+
+                    <label class="secondary-button file-button">
+                        Import Data
+                        <input
+                            type="file"
+                            id="importInput"
+                            accept=".json">
+                    </label>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ADD / EDIT CLASS MODAL -->
+    <div class="modal-overlay" id="classModal">
+
+        <div class="modal">
+
+            <button class="close-button" id="closeClassModal">
+                ×
+            </button>
+
+            <p class="eyebrow">CLASS</p>
+            <h2 id="classModalTitle">Add Class</h2>
+
+            <form id="classForm">
+
+                <label>
+                    Class Name
+                    <input
+                        id="className"
+                        type="text"
+                        placeholder="e.g. Science 8"
+                        required>
+                </label>
+
+                <label>
+                    Color
+                </label>
+
+                <div class="color-picker" id="colorPicker"></div>
+
+                <button class="primary-button" type="submit">
+                    Save Class
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <script src="script.js"></script>
+
+</body>
+</html>
