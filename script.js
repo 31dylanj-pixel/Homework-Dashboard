@@ -10,22 +10,22 @@
 const defaultClasses = [
     {
         id: crypto.randomUUID(),
-        name: "ICP 8",
+        name: "ICP",
         color: "#667eea"
     },
     {
         id: crypto.randomUUID(),
-        name: "Science 8",
+        name: "Algebra 1",
         color: "#8e7cc3"
     },
     {
         id: crypto.randomUUID(),
-        name: "English 8",
+        name: "LA",
         color: "#5fa58b"
     },
     {
         id: crypto.randomUUID(),
-        name: "Math 8",
+        name: "Social Studies",
         color: "#d88b65"
     }
 ];
