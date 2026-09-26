@@ -298,6 +298,41 @@ button {
    ASSIGNMENTS
 ========================================= */
 
+.assignment-heading-left {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.assignment-title-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.assignment-sort {
+    width: auto;
+
+    padding: 7px 11px;
+
+    border: 1px solid var(--border);
+    border-radius: 11px;
+
+    background: var(--glass);
+
+    color: var(--text);
+
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+
+    font-family: "Poppins", sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+
+    outline: none;
+    cursor: pointer;
+}
+
 .assignment-list {
     display: grid;
     gap: 13px;
