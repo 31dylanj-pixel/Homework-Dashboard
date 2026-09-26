@@ -1,0 +1,159 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="bg" x1="256" y1="0" x2="256" y2="512" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#989ECB"/>
+            <stop offset="16.667%" stop-color="#8CA4C6"/>
+            <stop offset="33.333%" stop-color="#92A9BE"/>
+            <stop offset="50%" stop-color="#A7ACB4"/>
+            <stop offset="66.667%" stop-color="#C4AFA8"/>
+            <stop offset="83.333%" stop-color="#DFAF9D"/>
+            <stop offset="100%" stop-color="#EEAE93"/>
+        </linearGradient>
+
+        <linearGradient id="glass" x1="100" y1="80" x2="420" y2="440" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#17243B" stop-opacity="0.96"/>
+            <stop offset="100%" stop-color="#07111F" stop-opacity="0.92"/>
+        </linearGradient>
+
+        <linearGradient id="accent" x1="150" y1="150" x2="360" y2="360" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#FFFFFF"/>
+            <stop offset="100%" stop-color="#DCE3FF"/>
+        </linearGradient>
+
+        <filter id="shadow" x="50" y="50" width="412" height="412" filterUnits="userSpaceOnUse">
+            <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#07111F" flood-opacity="0.28"/>
+        </filter>
+    </defs>
+
+    <!-- Background -->
+    <rect
+        width="512"
+        height="512"
+        rx="112"
+        fill="url(#bg)"
+    />
+
+    <!-- Glass panel -->
+    <rect
+        x="82"
+        y="82"
+        width="348"
+        height="348"
+        rx="82"
+        fill="url(#glass)"
+        filter="url(#shadow)"
+    />
+
+    <!-- Subtle glass highlight -->
+    <path
+        d="M164 100H348C393 100 412 119 412 164V205C337 168 254 150 164 150C133 150 109 154 100 158V164C100 119 119 100 164 100Z"
+        fill="white"
+        fill-opacity="0.045"
+    />
+
+    <!-- Dashboard frame -->
+    <rect
+        x="145"
+        y="157"
+        width="222"
+        height="198"
+        rx="25"
+        stroke="url(#accent)"
+        stroke-width="14"
+    />
+
+    <!-- Top bar -->
+    <rect
+        x="145"
+        y="157"
+        width="222"
+        height="52"
+        rx="25"
+        fill="url(#accent)"
+        fill-opacity="0.13"
+    />
+
+    <line
+        x1="145"
+        y1="209"
+        x2="367"
+        y2="209"
+        stroke="url(#accent)"
+        stroke-width="8"
+        stroke-linecap="round"
+        opacity="0.8"
+    />
+
+    <!-- Window dots -->
+    <circle cx="174" cy="183" r="7" fill="#FFFFFF" fill-opacity="0.9"/>
+    <circle cx="197" cy="183" r="7" fill="#FFFFFF" fill-opacity="0.65"/>
+    <circle cx="220" cy="183" r="7" fill="#FFFFFF" fill-opacity="0.4"/>
+
+    <!-- Dashboard cards -->
+    <rect
+        x="169"
+        y="232"
+        width="78"
+        height="48"
+        rx="12"
+        fill="url(#accent)"
+        fill-opacity="0.15"
+    />
+
+    <rect
+        x="265"
+        y="232"
+        width="78"
+        height="48"
+        rx="12"
+        fill="url(#accent)"
+        fill-opacity="0.15"
+    />
+
+    <rect
+        x="169"
+        y="296"
+        width="174"
+        height="34"
+        rx="11"
+        fill="url(#accent)"
+        fill-opacity="0.11"
+    />
+
+    <!-- Chart bars -->
+    <rect x="182" y="250" width="10" height="17" rx="5" fill="#FFFFFF" fill-opacity="0.85"/>
+    <rect x="199" y="244" width="10" height="23" rx="5" fill="#FFFFFF" fill-opacity="0.7"/>
+    <rect x="216" y="237" width="10" height="30" rx="5" fill="#FFFFFF" fill-opacity="0.55"/>
+
+    <!-- Check mark -->
+    <path
+        d="M284 255L296 267L321 240"
+        stroke="#FFFFFF"
+        stroke-width="11"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+    />
+
+    <!-- Assignment lines -->
+    <line
+        x1="187"
+        y1="313"
+        x2="279"
+        y2="313"
+        stroke="#FFFFFF"
+        stroke-width="7"
+        stroke-linecap="round"
+        opacity="0.75"
+    />
+
+    <line
+        x1="296"
+        y1="313"
+        x2="325"
+        y2="313"
+        stroke="#FFFFFF"
+        stroke-width="7"
+        stroke-linecap="round"
+        opacity="0.4"
+    />
+</svg>
