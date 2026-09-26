@@ -105,7 +105,7 @@ let assignments =
 
 let selectedGradient =
     localStorage.getItem("dashboardGradient")
-    || "sunset";
+    || "Sunset";
 
 let editingClassId = null;
 let selectedClassColor = classColors[0];
@@ -212,18 +212,18 @@ function renderGradients() {
 
         button.className = "gradient-option";
 
-        if (gradient.id === selectedGradient) {
+        if (gradient.name === selectedGradient) {
             button.classList.add("active");
         }
 
-        button.style.background = gradient.css;
+        button.style.background = gradient.value;
 
         button.innerHTML =
             `<span>${gradient.name}</span>`;
 
         button.addEventListener("click", () => {
 
-            selectedGradient = gradient.id;
+            selectedGradient = gradient.name;
 
             localStorage.setItem(
                 "dashboardGradient",
@@ -241,6 +241,7 @@ function renderGradients() {
 
 
 function applyGradient() {
+
     const gradient = gradients.find(
         item => item.name === selectedGradient
     );
