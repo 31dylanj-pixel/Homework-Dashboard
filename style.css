@@ -27,7 +27,7 @@ body.light-text {
 }
 
 /* =========================================
-   MODAL THEME
+   MODAL TEXT THEME
 ========================================= */
 
 .modal {
@@ -39,18 +39,16 @@ body.light-text {
 
 .modal h2,
 .modal h3,
+.modal h4,
 .modal label,
 .modal .class-name,
 .modal .settings-title-row,
-.modal .settings-section,
-.modal .settings-section p {
+.modal .settings-section {
     color: var(--modal-text);
 }
 
-.modal .setting-description {
-    color: var(--modal-muted);
-}
-
+.modal .eyebrow,
+.modal .setting-description,
 .modal .class-action {
     color: var(--modal-muted);
 }
@@ -61,6 +59,11 @@ body.light-text {
 
 .modal input,
 .modal select {
+    color: var(--modal-text);
+}
+
+.modal .secondary-button,
+.modal .small-add-button {
     color: var(--modal-text);
 }
 
