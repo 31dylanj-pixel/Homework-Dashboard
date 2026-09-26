@@ -836,39 +836,6 @@ select:focus {
 }
 
 /* =========================================
-   ASSIGNMENT SORT
-========================================= */
-
-.assignment-heading-left {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.assignment-sort {
-    width: auto;
-
-    padding: 8px 12px;
-
-    border: 1px solid var(--border);
-    border-radius: 11px;
-
-    background: var(--glass);
-
-    color: var(--text);
-
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-
-    font-family: "Poppins", sans-serif;
-    font-size: 12px;
-    font-weight: 500;
-
-    outline: none;
-}
-
-
-/* =========================================
    EDIT / DRAG
 ========================================= */
 
