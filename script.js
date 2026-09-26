@@ -1076,3 +1076,15 @@ renderClasses();
 renderClassOptions();
 
 renderAssignments();
+
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js")
+            .then(() => {
+                console.log("School Dashboard offline mode enabled.");
+            })
+            .catch(error => {
+                console.error("Service worker registration failed:", error);
+            });
+    });
+}
