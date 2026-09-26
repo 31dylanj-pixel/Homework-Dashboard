@@ -31,8 +31,37 @@ body.light-text {
 ========================================= */
 
 .modal {
-    --text: #252735;
-    --muted: rgba(37, 39, 53, 0.62);
+    --modal-text: #252735;
+    --modal-muted: rgba(37, 39, 53, 0.62);
+
+    color: var(--modal-text);
+}
+
+.modal h2,
+.modal h3,
+.modal label,
+.modal .class-name,
+.modal .settings-title-row,
+.modal .settings-section,
+.modal .settings-section p {
+    color: var(--modal-text);
+}
+
+.modal .setting-description {
+    color: var(--modal-muted);
+}
+
+.modal .class-action {
+    color: var(--modal-muted);
+}
+
+.modal .class-action:hover {
+    color: var(--modal-text);
+}
+
+.modal input,
+.modal select {
+    color: var(--modal-text);
 }
 
 html,
