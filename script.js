@@ -515,22 +515,85 @@ function renderAssignments() {
 
     assignmentList.innerHTML = "";
 
-    const sorted =
-        [...assignments].sort(
-            (a, b) => {
+    const sortMode =
+        document.getElementById("assignmentSort")?.value
+        || "priority";
 
-                if (a.completed !== b.completed) {
-                    return a.completed ? 1 : -1;
-                }
+    let sorted = [...assignments];
 
-                return (
-                    new Date(a.dueDate + "T" + (a.dueTime || "23:59"))
-                    -
-                    new Date(b.dueDate + "T" + (b.dueTime || "23:59"))
-                );
+    const priorityOrder = {
+        high: 1,
+        normal: 2,
+        low: 3
+    };
+
+    if (sortMode === "priority") {
+
+        sorted.sort((a, b) => {
+
+            if (a.completed !== b.completed) {
+                return a.completed ? 1 : -1;
             }
-        );
 
+            const priorityA =
+                priorityOrder[a.priority || "normal"] || 2;
+
+            const priorityB =
+                priorityOrder[b.priority || "normal"] || 2;
+
+            if (priorityA !== priorityB) {
+                return priorityA - priorityB;
+            }
+
+            return (
+                new Date(
+                    a.dueDate +
+                    "T" +
+                    (a.dueTime || "23:59")
+                )
+                -
+                new Date(
+                    b.dueDate +
+                    "T" +
+                    (b.dueTime || "23:59")
+                )
+            );
+        });
+
+    } else if (sortMode === "due") {
+
+        sorted.sort((a, b) => {
+
+            if (a.completed !== b.completed) {
+                return a.completed ? 1 : -1;
+            }
+
+            return (
+                new Date(
+                    a.dueDate +
+                    "T" +
+                    (a.dueTime || "23:59")
+                )
+                -
+                new Date(
+                    b.dueDate +
+                    "T" +
+                    (b.dueTime || "23:59")
+                )
+            );
+        });
+
+    } else {
+
+        /*
+         * Manual order
+         */
+        sorted.sort(
+            (a, b) =>
+                (a.order ?? 0) -
+                (b.order ?? 0)
+        );
+    }
 
     if (sorted.length === 0) {
 
@@ -562,6 +625,11 @@ function renderAssignments() {
                     ? " completed"
                     : "");
 
+            card.draggable = true;
+
+            card.dataset.assignmentId =
+                assignment.id;
+
             card.innerHTML = `
 
                 <div
@@ -582,26 +650,37 @@ function renderAssignments() {
                     </div>
 
                     <div class="assignment-due">
-                        Due ${formatDueDate(assignment)}
+                         Due ${formatDueDate(assignment)}
+                         <span class="assignment-priority">
+                             · Priority: ${escapeHTML(
+                                 capitalizePriority(assignment.priority)
+                             )}
+                         </span>
                     </div>
 
                 </div>
 
                 <div class="assignment-actions">
 
-                    <button
-                        class="complete-button"
-                        title="Complete">
-                        ${assignment.completed ? "↶" : "✓"}
-                    </button>
-
-                    <button
-                        class="delete-assignment-button"
-                        title="Delete">
-                        ×
-                    </button>
-
-                </div>
+                   <button
+                       class="edit-assignment-button"
+                       title="Edit">
+                       ✎
+                   </button>
+               
+                   <button
+                       class="complete-button"
+                       title="Complete">
+                       ${assignment.completed ? "↶" : "✓"}
+                   </button>
+               
+                   <button
+                       class="delete-assignment-button"
+                       title="Delete">
+                       ×
+                   </button>
+               
+               </div>
             `;
 
 
@@ -611,12 +690,119 @@ function renderAssignments() {
                     () => toggleAssignment(assignment.id)
                 );
 
+            card.querySelector(".edit-assignment-button")
+             .addEventListener(
+                 "click",
+                 () => editAssignment(assignment.id)
+            );
 
             card.querySelector(".delete-assignment-button")
                 .addEventListener(
                     "click",
                     () => deleteAssignment(assignment.id)
                 );
+
+            card.addEventListener(
+                "dragstart",
+                event => {
+            
+                    event.dataTransfer.setData(
+                        "text/plain",
+                        assignment.id
+                    );
+            
+                    card.classList.add("dragging");
+                }
+            );
+            
+            card.addEventListener(
+                "dragend",
+                () => {
+            
+                    card.classList.remove("dragging");
+                }
+            );
+            
+            card.addEventListener(
+                "dragover",
+                event => {
+            
+                    event.preventDefault();
+            
+                    const dragging =
+                        assignmentList.querySelector(
+                            ".dragging"
+                        );
+            
+                    if (!dragging || dragging === card) {
+                        return;
+                    }
+            
+                    const rect =
+                        card.getBoundingClientRect();
+            
+                    const halfway =
+                        rect.top +
+                        rect.height / 2;
+            
+                    if (event.clientY < halfway) {
+            
+                        assignmentList.insertBefore(
+                            dragging,
+                            card
+                        );
+            
+                    } else {
+            
+                        assignmentList.insertBefore(
+                            dragging,
+                            card.nextSibling
+                        );
+                    }
+                }
+            );
+            
+            card.addEventListener(
+                "drop",
+                event => {
+            
+                    event.preventDefault();
+            
+                    const orderedIds =
+                        [...assignmentList.children]
+                            .map(
+                                item =>
+                                    item.dataset.assignmentId
+                            );
+            
+                    orderedIds.forEach(
+                        (id, index) => {
+            
+                            const assignment =
+                                assignments.find(
+                                    item => item.id === id
+                                );
+            
+                            if (assignment) {
+                                assignment.order = index;
+                            }
+                        }
+                    );
+            
+                    saveData();
+            
+                    const sort =
+                        document.getElementById(
+                            "assignmentSort"
+                        );
+            
+                    if (sort) {
+                        sort.value = "manual";
+                    }
+            
+                    renderAssignments();
+                }
+            );
 
 
             assignmentList.appendChild(card);
@@ -626,7 +812,17 @@ function renderAssignments() {
     updateStats();
 }
 
+function capitalizePriority(priority) {
 
+    if (!priority) {
+        return "Normal";
+    }
+
+    return (
+        priority.charAt(0).toUpperCase()
+        + priority.slice(1)
+    );
+}
 /* =========================================
    ADD ASSIGNMENT
 ========================================= */
@@ -663,24 +859,65 @@ assignmentForm.addEventListener(
                 .value;
 
 
-        assignments.push({
+        /* =====================================
+           EDIT EXISTING ASSIGNMENT
+        ===================================== */
 
-            id: crypto.randomUUID(),
+        if (editingAssignmentId) {
 
-            name,
+            const assignment =
+                assignments.find(
+                    item =>
+                        item.id === editingAssignmentId
+                );
 
-            classId,
+            if (assignment) {
 
-            dueDate,
+                assignment.name = name;
+                assignment.classId = classId;
+                assignment.dueDate = dueDate;
+                assignment.dueTime = dueTime;
+                assignment.priority = priority;
+            }
 
-            dueTime,
+        }
 
-            priority,
 
-            completed: false,
+        /* =====================================
+           CREATE NEW ASSIGNMENT
+        ===================================== */
 
-            createdAt: new Date().toISOString()
-        });
+        else {
+
+            assignments.push({
+
+                id: crypto.randomUUID(),
+
+                name,
+
+                classId,
+
+                dueDate,
+
+                dueTime,
+
+                priority,
+
+                completed: false,
+
+                order:
+                    assignments.length > 0
+                        ? Math.max(
+                            ...assignments.map(
+                                item => item.order ?? 0
+                            )
+                        ) + 1
+                        : 0,
+
+                createdAt:
+                    new Date().toISOString()
+            });
+        }
 
 
         saveData();
@@ -689,10 +926,87 @@ assignmentForm.addEventListener(
 
         assignmentForm.reset();
 
+        editingAssignmentId = null;
+
+        const modalTitle =
+            document.querySelector(
+                "#assignmentModal h2"
+            );
+
+        if (modalTitle) {
+            modalTitle.textContent =
+                "Add Assignment";
+        }
+
+        const submitButton =
+            document.querySelector(
+                "#assignmentForm .primary-button"
+            );
+
+        if (submitButton) {
+            submitButton.textContent =
+                "Add Assignment";
+        }
+
         assignmentModal.classList.remove("active");
     }
 );
 
+/* =========================================
+   EDIT ASSIGNMENT
+========================================= */
+
+let editingAssignmentId = null;
+
+
+function editAssignment(id) {
+
+    const assignment =
+        assignments.find(
+            item => item.id === id
+        );
+
+    if (!assignment) return;
+
+    editingAssignmentId = id;
+
+    document.getElementById("assignmentName")
+        .value = assignment.name;
+
+    document.getElementById("assignmentClass")
+        .value = assignment.classId;
+
+    document.getElementById("assignmentDate")
+        .value = assignment.dueDate;
+
+    document.getElementById("assignmentTime")
+        .value = assignment.dueTime || "";
+
+    document.getElementById("assignmentPriority")
+        .value = assignment.priority || "normal";
+
+    const modalTitle =
+        document.querySelector(
+            "#assignmentModal h2"
+        );
+
+    if (modalTitle) {
+        modalTitle.textContent =
+            "Edit Assignment";
+    }
+
+    const submitButton =
+        document.querySelector(
+            "#assignmentForm .primary-button"
+        );
+
+    if (submitButton) {
+        submitButton.textContent =
+            "Save Changes";
+    }
+
+    assignmentModal.classList.add("active");
+}
 
 /* =========================================
    COMPLETE / DELETE
@@ -873,10 +1187,33 @@ document.getElementById("addButton")
                 return;
             }
 
+            editingAssignmentId = null;
+
+            assignmentForm.reset();
+
+            const modalTitle =
+                document.querySelector(
+                    "#assignmentModal h2"
+                );
+
+            if (modalTitle) {
+                modalTitle.textContent =
+                    "Add Assignment";
+            }
+
+            const submitButton =
+                document.querySelector(
+                    "#assignmentForm .primary-button"
+                );
+
+            if (submitButton) {
+                submitButton.textContent =
+                    "Add Assignment";
+            }
+
             assignmentModal.classList.add("active");
         }
     );
-
 
 document.getElementById("closeAssignmentModal")
     .addEventListener(
@@ -920,6 +1257,13 @@ document.getElementById("closeClassModal")
         }
     );
 
+document.getElementById("assignmentSort")
+    .addEventListener(
+        "change",
+        () => {
+            renderAssignments();
+        }
+    );
 
 /* =========================================
    CLOSE MODALS WHEN CLICKING OUTSIDE
