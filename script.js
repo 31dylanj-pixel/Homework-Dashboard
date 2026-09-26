@@ -107,6 +107,14 @@ let selectedGradient =
     localStorage.getItem("dashboardGradient")
     || "Sunset";
 
+let notificationsEnabled =
+    localStorage.getItem("dashboardNotifications") === "true";
+
+let notificationTimes =
+    JSON.parse(
+        localStorage.getItem("dashboardNotificationTimes")
+    ) || [];
+
 let editingClassId = null;
 let selectedClassColor = classColors[0];
 
@@ -124,6 +132,103 @@ function saveData() {
     );
 }
 
+/* =========================================
+   NOTIFICATIONS
+========================================= */
+
+const notificationToggle =
+    document.getElementById("notificationToggle");
+
+const notificationOptions =
+    document.getElementById("notificationOptions");
+
+const notificationTimeInputs =
+    document.querySelectorAll(".notification-time");
+
+function renderNotificationSettings() {
+
+    notificationToggle.checked =
+        notificationsEnabled;
+
+    notificationTimeInputs.forEach(input => {
+        input.checked =
+            notificationTimes.includes(
+                Number(input.value)
+            );
+    });
+
+    notificationOptions.classList.toggle(
+        "disabled",
+        !notificationsEnabled
+    );
+}
+
+notificationToggle.addEventListener(
+    "change",
+    async () => {
+
+        if (notificationToggle.checked) {
+
+            if (!("Notification" in window)) {
+                alert(
+                    "This device does not support notifications."
+                );
+
+                notificationToggle.checked = false;
+                return;
+            }
+
+            const permission =
+                await Notification.requestPermission();
+
+            if (permission !== "granted") {
+
+                notificationToggle.checked = false;
+
+                alert(
+                    "Notification permission was not granted."
+                );
+
+                return;
+            }
+
+            notificationsEnabled = true;
+
+        } else {
+
+            notificationsEnabled = false;
+        }
+
+        localStorage.setItem(
+            "dashboardNotifications",
+            notificationsEnabled
+        );
+
+        renderNotificationSettings();
+    }
+);
+
+notificationTimeInputs.forEach(input => {
+
+    input.addEventListener(
+        "change",
+        () => {
+
+            notificationTimes =
+                [...notificationTimeInputs]
+                    .filter(item => item.checked)
+                    .map(item => Number(item.value));
+
+            localStorage.setItem(
+                "dashboardNotificationTimes",
+                JSON.stringify(notificationTimes)
+            );
+        }
+    );
+
+});
+
+renderNotificationSettings();
 
 /* =========================================
    ELEMENTS
