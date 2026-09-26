@@ -33,39 +33,34 @@ const defaultClasses = [
 
 const gradients = [
     {
-        id: "sunset",
         name: "Sunset",
-        css: "linear-gradient(180deg, #989ecb 0%, #8ca4c6 16.667%, #92a9be 33.333%, #a7acb4 50%, #c4afa8 66.667%, #dfaf9d 83.333%, #eeae93 100%)"
+        value: "linear-gradient(180deg, #989ecb 0%, #8ca4c6 16.667%, #92a9be 33.333%, #a7acb4 50%, #c4afa8 66.667%, #dfaf9d 83.333%, #eeae93 100%)",
+        text: "dark"
     },
-
     {
-        id: "midnight",
         name: "Midnight",
-        css: "linear-gradient(180deg, #18233d 0%, #253c59 35%, #405b73 70%, #68798a 100%)"
+        value: "linear-gradient(180deg, #0b1220 0%, #111d32 50%, #172a46 100%)",
+        text: "light"
     },
-
     {
-        id: "ocean",
         name: "Ocean",
-        css: "linear-gradient(180deg, #5b8fa8 0%, #6fa7b6 35%, #91c2c0 70%, #c1d7c9 100%)"
+        value: "linear-gradient(180deg, #164e63 0%, #155e75 50%, #0e7490 100%)",
+        text: "light"
     },
-
     {
-        id: "lavender",
         name: "Lavender",
-        css: "linear-gradient(180deg, #8d86b5 0%, #a49bc2 35%, #c2b5cc 70%, #dfc6c4 100%)"
+        value: "linear-gradient(180deg, #c4b5fd 0%, #a78bfa 50%, #818cf8 100%)",
+        text: "dark"
     },
-
     {
-        id: "forest",
         name: "Forest",
-        css: "linear-gradient(180deg, #405c55 0%, #557363 35%, #7e9277 70%, #b3aa8a 100%)"
+        value: "linear-gradient(180deg, #163a2c 0%, #1f513c 50%, #285f48 100%)",
+        text: "light"
     },
-
     {
-        id: "cloud",
         name: "Cloud",
-        css: "linear-gradient(180deg, #b8c4d3 0%, #cbd1d7 35%, #ddd5cf 70%, #ead8cf 100%)"
+        value: "linear-gradient(180deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%)",
+        text: "dark"
     }
 ];
 
@@ -83,6 +78,18 @@ const classColors = [
     "#c27878"
 ];
 
+function applyTextTheme() {
+    const gradient = gradients.find(
+        item => item.name === selectedGradient
+    );
+
+    if (!gradient) return;
+
+    document.body.classList.toggle(
+        "light-text",
+        gradient.text === "light"
+    );
+}
 
 /* =========================================
    STORAGE
@@ -234,18 +241,17 @@ function renderGradients() {
 
 
 function applyGradient() {
-
-    const gradient =
-        gradients.find(
-            item => item.id === selectedGradient
-        );
+    const gradient = gradients.find(
+        item => item.name === selectedGradient
+    );
 
     if (!gradient) return;
 
     document.body.style.background =
-        gradient.css;
-}
+        gradient.value;
 
+    applyTextTheme();
+}
 
 /* =========================================
    CLASSES
