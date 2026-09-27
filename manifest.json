@@ -1,18 +1,18 @@
 {
-  "name": "School Dashboard",
-  "short_name": "School",
-  "description": "A personal school assignment dashboard.",
-  "start_url": "./",
-  "display": "standalone",
-  "background_color": "#989ecb",
-  "theme_color": "#989ecb",
-  "orientation": "portrait",
-  "icons": [
+    "name": "School Dashboard",
+    "short_name": "School",
+    "description": "A personal school assignment dashboard.",
+    "start_url": "./",
+    "display": "standalone",
+    "orientation": "any",
+    "background_color": "#989ecb",
+    "theme_color": "#989ecb",
+    "icons": [
         {
             "src": "icon.svg",
             "sizes": "any",
             "type": "image/svg+xml",
-            "purpose": "any"
+            "purpose": "any maskable"
         }
-  ]
+    ]
 }
