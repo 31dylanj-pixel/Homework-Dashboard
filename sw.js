@@ -1,4 +1,4 @@
-const CACHE_NAME = "school-dashboard-v11";
+const CACHE_NAME = "school-dashboard-v12";
 
 const FILES_TO_CACHE = [
     "./",
@@ -33,6 +33,14 @@ self.addEventListener("activate", event => {
 });
 
 self.addEventListener("fetch", event => {
+
+    const url = new URL(event.request.url);
+
+    // Only handle requests belonging to this website.
+    if (url.origin !== self.location.origin) {
+        return;
+    }
+
     event.respondWith(
         caches.match(event.request).then(cachedResponse => {
             return cachedResponse || fetch(event.request);
