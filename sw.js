@@ -1,4 +1,4 @@
-const CACHE_NAME = "school-dashboard-v14";
+const CACHE_NAME = "school-dashboard-v15";
 
 const FILES_TO_CACHE = [
     "./",
