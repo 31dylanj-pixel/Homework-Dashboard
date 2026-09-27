@@ -198,16 +198,27 @@ async function registerForPushNotifications() {
 
     if (!subscription) {
 
-        subscription =
-            await registration.pushManager.subscribe({
-
-                userVisibleOnly: true,
-
-                applicationServerKey:
-                    urlBase64ToUint8Array(
-                        VAPID_PUBLIC_KEY
-                    )
-            });
+        try {
+          subscription =
+              await registration.pushManager.subscribe({
+                  userVisibleOnly: true,
+                  applicationServerKey:
+                      urlBase64ToUint8Array(
+                          VAPID_PUBLIC_KEY
+                      )
+              });
+      
+      } catch (error) {
+      
+          alert(
+              "PushManager.subscribe failed:\n\n" +
+              error.name +
+              "\n\n" +
+              error.message
+          );
+      
+          throw error;
+      }
     }
 
     const response =
