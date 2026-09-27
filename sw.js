@@ -1,4 +1,4 @@
-const CACHE_NAME = "school-dashboard-v13";
+const CACHE_NAME = "school-dashboard-v14";
 
 const FILES_TO_CACHE = [
     "./",
@@ -49,40 +49,68 @@ self.addEventListener("fetch", event => {
 });
 
 self.addEventListener("push", event => {
-    if (!event.data) return;
 
-    const data = event.data.json();
+    if (!event.data) {
+        return;
+    }
+
+    let data;
+
+    try {
+        data = event.data.json();
+    } catch {
+        data = {
+            title: "Classroom Dashboard",
+            body: event.data.text()
+        };
+    }
 
     event.waitUntil(
         self.registration.showNotification(
             data.title || "Classroom Dashboard",
             {
                 body: data.body || "",
-                icon: data.icon || "./icon.svg",
-                tag: data.tag || "classroom-test"
+                icon: "./icon.svg",
+                tag: data.tag || "classroom-notification"
             }
         )
     );
 });
 
-self.addEventListener("notificationclick", event => {
-    event.notification.close();
 
-    event.waitUntil(
-        self.clients.matchAll({
-            type: "window"
-        }).then(clients => {
+self.addEventListener(
+    "notificationclick",
+    event => {
 
-            for (const client of clients) {
-                if (
-                    client.url.includes(self.location.origin) &&
-                    "focus" in client
-                ) {
-                    return client.focus();
-                }
-            }
+        event.notification.close();
 
-            return self.clients.openWindow("./");
-        })
-    );
-});
+        event.waitUntil(
+
+            self.clients
+                .matchAll({
+                    type: "window",
+                    includeUncontrolled: true
+                })
+                .then(clients => {
+
+                    for (
+                        const client of clients
+                    ) {
+
+                        if (
+                            client.url.startsWith(
+                                self.location.origin
+                            )
+                        ) {
+
+                            return client.focus();
+                        }
+                    }
+
+                    return self.clients.openWindow(
+                        "./"
+                    );
+                })
+        );
+    }
+);
