@@ -47,3 +47,42 @@ self.addEventListener("fetch", event => {
         })
     );
 });
+
+self.addEventListener("push", event => {
+    if (!event.data) return;
+
+    const data = event.data.json();
+
+    event.waitUntil(
+        self.registration.showNotification(
+            data.title || "Classroom Dashboard",
+            {
+                body: data.body || "",
+                icon: data.icon || "./icon.svg",
+                tag: data.tag || "classroom-test"
+            }
+        )
+    );
+});
+
+self.addEventListener("notificationclick", event => {
+    event.notification.close();
+
+    event.waitUntil(
+        self.clients.matchAll({
+            type: "window"
+        }).then(clients => {
+
+            for (const client of clients) {
+                if (
+                    client.url.includes(self.location.origin) &&
+                    "focus" in client
+                ) {
+                    return client.focus();
+                }
+            }
+
+            return self.clients.openWindow("./");
+        })
+    );
+});
