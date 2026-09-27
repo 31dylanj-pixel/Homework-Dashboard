@@ -284,7 +284,8 @@ notificationToggle.addEventListener(
                 notificationToggle.checked = false;
 
                 alert(
-                    "Could not enable notifications. Please try again."
+                    "Push registration failed:\n\n" +
+                    error.message
                 );
 
                 return;
