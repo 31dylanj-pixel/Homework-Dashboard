@@ -130,6 +130,10 @@ function saveData() {
         "dashboardAssignments",
         JSON.stringify(assignments)
     );
+
+    syncAssignmentsToCloud().catch(error => {
+       console.error("Assignment cloud sync failed:", error);
+    });
 }
 
 /* =========================================
@@ -141,6 +145,51 @@ const VAPID_PUBLIC_KEY =
 
 const NOTIFICATION_API =
     "https://classroom-dashboard-notifications.31dylan-j.workers.dev";
+
+async function syncAssignmentsToCloud() {
+
+    try {
+
+        const response =
+            await fetch(
+                `${NOTIFICATION_API}/assignments`,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify({
+                            assignments
+                        })
+                }
+            );
+
+        if (!response.ok) {
+            throw new Error(
+                `Cloud sync failed: HTTP ${response.status}`
+            );
+        }
+
+        const result =
+            await response.json();
+
+        console.log(
+            "☁️ Assignments synced:",
+            result
+        );
+
+    } catch (error) {
+
+        console.error(
+            "☁️ Assignment sync failed:",
+            error
+        );
+    }
+}
 
 const notificationToggle =
     document.getElementById("notificationToggle");
