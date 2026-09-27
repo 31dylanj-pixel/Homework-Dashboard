@@ -136,6 +136,12 @@ function saveData() {
    NOTIFICATIONS
 ========================================= */
 
+const VAPID_PUBLIC_KEY =
+    "BHM9DjByzig_JxgDu9kN1mnKtYNenubKDj3rvUOKwvx9APsrqDOvP4e_do_7ZoVrNCKKmz2fzfvusMb4gH6pdrw";
+
+const NOTIFICATION_API =
+    "https://classroom-dashboard-notifications.31dylan-j.workers.dev";
+
 const notificationToggle =
     document.getElementById("notificationToggle");
 
@@ -145,22 +151,90 @@ const notificationOptions =
 const notificationTimeInputs =
     document.querySelectorAll(".notification-time");
 
-function renderNotificationSettings() {
+function urlBase64ToUint8Array(base64String) {
 
-    notificationToggle.checked =
-        notificationsEnabled;
+    const padding =
+        "=".repeat(
+            (4 - base64String.length % 4) % 4
+        );
 
-    notificationTimeInputs.forEach(input => {
-        input.checked =
-            notificationTimes.includes(
-                Number(input.value)
-            );
-    });
+    const base64 =
+        (
+            base64String +
+            padding
+        )
+            .replace(/-/g, "+")
+            .replace(/_/g, "/");
 
-    notificationOptions.classList.toggle(
-        "disabled",
-        !notificationsEnabled
+    const rawData =
+        atob(base64);
+
+    return Uint8Array.from(
+        [...rawData].map(
+            char => char.charCodeAt(0)
+        )
     );
+}
+
+async function registerForPushNotifications() {
+
+    if (!("serviceWorker" in navigator)) {
+        throw new Error(
+            "Service workers are not supported."
+        );
+    }
+
+    if (!("PushManager" in window)) {
+        throw new Error(
+            "Push notifications are not supported."
+        );
+    }
+
+    const registration =
+        await navigator.serviceWorker.ready;
+
+    let subscription =
+        await registration.pushManager.getSubscription();
+
+    if (!subscription) {
+
+        subscription =
+            await registration.pushManager.subscribe({
+
+                userVisibleOnly: true,
+
+                applicationServerKey:
+                    urlBase64ToUint8Array(
+                        VAPID_PUBLIC_KEY
+                    )
+            });
+    }
+
+    const response =
+        await fetch(
+            `${NOTIFICATION_API}/subscribe`,
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body:
+                    JSON.stringify(
+                        subscription
+                    )
+            }
+        );
+
+    if (!response.ok) {
+        throw new Error(
+            "Could not register for notifications."
+        );
+    }
+
+    return subscription;
 }
 
 notificationToggle.addEventListener(
@@ -192,7 +266,29 @@ notificationToggle.addEventListener(
                 return;
             }
 
-            notificationsEnabled = true;
+            /* Register this device for Web Push */
+
+            try {
+
+                await registerForPushNotifications();
+
+                notificationsEnabled = true;
+
+            } catch (error) {
+
+                console.error(
+                    "Push registration failed:",
+                    error
+                );
+
+                notificationToggle.checked = false;
+
+                alert(
+                    "Could not enable notifications. Please try again."
+                );
+
+                return;
+            }
 
         } else {
 
@@ -207,6 +303,24 @@ notificationToggle.addEventListener(
         renderNotificationSettings();
     }
 );
+
+function renderNotificationSettings() {
+
+    notificationToggle.checked =
+        notificationsEnabled;
+
+    notificationTimeInputs.forEach(input => {
+        input.checked =
+            notificationTimes.includes(
+                Number(input.value)
+            );
+    });
+
+    notificationOptions.classList.toggle(
+        "disabled",
+        !notificationsEnabled
+    );
+}
 
 notificationTimeInputs.forEach(input => {
 
