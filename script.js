@@ -178,74 +178,96 @@ function urlBase64ToUint8Array(base64String) {
 
 async function registerForPushNotifications() {
 
-    if (!("serviceWorker" in navigator)) {
-        throw new Error(
-            "Service workers are not supported."
-        );
-    }
+    try {
 
-    if (!("PushManager" in window)) {
-        throw new Error(
-            "Push notifications are not supported."
-        );
-    }
+        if (!("serviceWorker" in navigator)) {
+            throw new Error("Step 1 failed: Service workers are not supported.");
+        }
 
-    const registration =
-        await navigator.serviceWorker.ready;
+        if (!("PushManager" in window)) {
+            throw new Error("Step 2 failed: PushManager is not supported.");
+        }
 
-    let subscription =
-        await registration.pushManager.getSubscription();
+        const registration =
+            await navigator.serviceWorker.ready;
 
-    if (!subscription) {
+        console.log("STEP 3: Service worker ready");
 
-        try {
-          subscription =
-              await registration.pushManager.subscribe({
-                  userVisibleOnly: true,
-                  applicationServerKey:
-                      urlBase64ToUint8Array(
-                          VAPID_PUBLIC_KEY
-                      )
-              });
-      
-      } catch (error) {
-      
-          alert(
-              "PushManager.subscribe failed:\n\n" +
-              error.name +
-              "\n\n" +
-              error.message
-          );
-      
-          throw error;
-      }
-    }
+        let subscription =
+            await registration.pushManager.getSubscription();
 
-    const response =
-        await fetch(
-            `${NOTIFICATION_API}/subscribe`,
-            {
-                method: "POST",
-
-                headers: {
-                    "Content-Type":
-                        "application/json"
-                },
-
-                body:
-                    JSON.stringify(
-                        subscription
-                    )
-            }
+        console.log(
+            "STEP 4: Existing subscription:",
+            subscription
         );
 
-    if (!response.ok) {
-        throw new Error(
-            "Could not register for notifications."
-        );
-    }
+        if (!subscription) {
 
-    return subscription;
+            console.log("STEP 5: Creating push subscription...");
+
+            subscription =
+                await registration.pushManager.subscribe({
+
+                    userVisibleOnly: true,
+
+                    applicationServerKey:
+                        urlBase64ToUint8Array(
+                            VAPID_PUBLIC_KEY
+                        )
+                });
+
+            console.log(
+                "STEP 6: Push subscription created:",
+                subscription
+            );
+        }
+
+        console.log("STEP 7: Sending subscription to Worker...");
+
+        const response =
+            await fetch(
+                `${NOTIFICATION_API}/subscribe`,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify(
+                            subscription
+                        )
+                }
+            );
+
+        console.log(
+            "STEP 8: Worker response:",
+            response.status
+        );
+
+        if (!response.ok) {
+            throw new Error(
+                `Step 9 failed: Worker returned HTTP ${response.status}`
+            );
+        }
+
+        console.log("STEP 10: Registration successful!");
+
+        return subscription;
+
+    } catch (error) {
+
+        alert(
+            "Notification setup failed:\n\n" +
+            error.name +
+            "\n\n" +
+            error.message
+        );
+
+        throw error;
+    }
 }
 
 notificationToggle.addEventListener(
