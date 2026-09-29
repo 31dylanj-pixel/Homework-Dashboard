@@ -147,26 +147,47 @@ const NOTIFICATION_API =
     "https://classroom-dashboard-notifications.31dylan-j.workers.dev";
 
 async function syncAssignmentsToCloud() {
-
     try {
+        const timezone =
+            Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-        const response =
-            await fetch(
-                `${NOTIFICATION_API}/assignments`,
-                {
-                    method: "POST",
+        const cloudAssignments = assignments.map(assignment => {
+            let dueAt = null;
 
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
+            if (assignment.dueDate) {
+                const time = assignment.dueTime || "23:59";
 
-                    body:
-                        JSON.stringify({
-                            assignments
-                        })
-                }
-            );
+                // Convert the dashboard's local date/time
+                // into an absolute UTC timestamp.
+                dueAt = new Date(
+                    `${assignment.dueDate}T${time}:00`
+                ).toISOString();
+            }
+
+            return {
+                ...assignment,
+                className:
+                    classes.find(c => c.id === assignment.classId)?.name
+                    || "No Class",
+                dueAt
+            };
+        });
+
+        const response = await fetch(
+            `${NOTIFICATION_API}/assignments`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    assignments: cloudAssignments,
+                    notificationsEnabled,
+                    notificationTimes,
+                    timezone
+                })
+            }
+        );
 
         if (!response.ok) {
             throw new Error(
@@ -174,20 +195,12 @@ async function syncAssignmentsToCloud() {
             );
         }
 
-        const result =
-            await response.json();
+        const result = await response.json();
 
-        console.log(
-            "☁️ Assignments synced:",
-            result
-        );
+        console.log("☁️ Dashboard synced:", result);
 
     } catch (error) {
-
-        console.error(
-            "☁️ Assignment sync failed:",
-            error
-        );
+        console.error("☁️ Dashboard sync failed:", error);
     }
 }
 
