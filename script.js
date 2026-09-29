@@ -131,9 +131,7 @@ function saveData() {
         JSON.stringify(assignments)
     );
 
-    syncAssignmentsToCloud().catch(error => {
-       console.error("Assignment cloud sync failed:", error);
-    });
+    syncAssignmentsToCloud();
 }
 
 /* =========================================
@@ -332,9 +330,7 @@ async function registerForPushNotifications() {
     }
 }
 
-notificationToggle.addEventListener(
-    "change",
-    async () => {
+notificationToggle.addEventListener("change", async () => {
 
         if (notificationToggle.checked) {
 
@@ -392,10 +388,12 @@ notificationToggle.addEventListener(
         }
 
         localStorage.setItem(
-            "dashboardNotifications",
-            notificationsEnabled
+          "dashboardNotifications",
+          notificationsEnabled
         );
-
+      
+        syncAssignmentsToCloud();
+      
         renderNotificationSettings();
     }
 );
@@ -433,6 +431,8 @@ notificationTimeInputs.forEach(input => {
                 "dashboardNotificationTimes",
                 JSON.stringify(notificationTimes)
             );
+
+            syncAssignmentsToCloud();
         }
     );
 
